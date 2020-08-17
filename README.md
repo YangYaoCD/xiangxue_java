@@ -24,7 +24,7 @@
 线程自然终止：自然执行完或抛出未处理异常
 不自然终止：stop()，resume()，suspend()已不建议使用，stop()会导致线程不会正确释放资源，suspend()线程不会释放资源容易导致死锁。java线程是协作式，而非抢占式。可以使用interrupt()、isinterrupted()、static方法isinterrupted()。调用了static方法isinterrupted()后会把中断标志位改为false。
 方法内如果抛出InterruptedException，线程的中断标志位会被复位成false，如果确实是需要中断线程，要求我们自己在catch语句块里再次调用interrupt()。
- ![image](https://github.com//xiangxue//src//picture//thread.png)
+ ![image](https://github.com/YangYaoCD/xiangxue_java/blob/master/src/picture/thread.png)
  
  
 ##1.2线程的并发工具类
