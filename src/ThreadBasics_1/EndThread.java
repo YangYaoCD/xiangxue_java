@@ -3,7 +3,7 @@ package ThreadBasics_1;
 /**
  * @author YangYao
  * @date 2020/8/17 10:50
- * @Description 安全中断线程
+ * @Description 安全中断线程(不是强制中断while(true)，相当于检查中断标志位)
  */
 public class EndThread {
     private static class UseThread extends Thread{

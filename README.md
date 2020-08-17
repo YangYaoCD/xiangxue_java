@@ -5,27 +5,36 @@
 ##1.1线程基础、线程之间的共享和协作
 ###1.1.1基础概念
 ####1.	什么是进程和线程
-进程：程序运行资源分配的最小单位，进程内部有多个线程，会共享这个进程的资源
+进程：程序运行资源分配的最小单位，进程内部有多个线程，会共享这个进程的资源  
 线程：CPU调度的最小单位，必须依赖进程而存在。
 ####2.	澄清并行和并发
-并行：同一时刻，可以同时处理事情的能力
-并发：与单位时间相关，在单位时间内可以处理事情的能力
+并行：同一时刻，可以同时处理事情的能力  
+并发：与单位时间相关，在单位时间内可以处理事情的能力  
 ####3.	高并发编程的意义、好处和注意事项
-好处：充分利用cpu的资源、加快用户响应的时间，程序模块化，异步化
-问题：
-线程共享资源，存在冲突；
-容易导致死锁；
-启用太多的线程，就有搞垮机器的可能
+好处：充分利用cpu的资源、加快用户响应的时间，程序模块化，异步化  
+问题：  
+线程共享资源，存在冲突；  
+容易导致死锁；  
+启用太多的线程，就有搞垮机器的可能  
 ###1.1.2认识Java里的线程
 ####1.	Java程序天生就是多线程的，新启线程的方式
-类Thread、接口Runnable、接口Callable
-单继承、多实现（只能继承一个类，但是可以实现多个接口）
+类Thread、接口Runnable、接口Callable  
+单继承、多实现（只能继承一个类，但是可以实现多个接口）  
 ####2.	怎么样才能让Java里的线程安全停止工作呢
 线程自然终止：自然执行完或抛出未处理异常
-不自然终止：stop()，resume()，suspend()已不建议使用，stop()会导致线程不会正确释放资源，suspend()线程不会释放资源容易导致死锁。java线程是协作式，而非抢占式。可以使用interrupt()、isinterrupted()、static方法isinterrupted()。调用了static方法isinterrupted()后会把中断标志位改为false。
-方法内如果抛出InterruptedException，线程的中断标志位会被复位成false，如果确实是需要中断线程，要求我们自己在catch语句块里再次调用interrupt()。
- ![image](https://github.com/YangYaoCD/xiangxue_java/blob/master/src/picture/thread.png)
- 
+不自然终止：stop()，resume()，suspend()已不建议使用，stop()会导致线程不会正确释放资源，suspend()线程不会释放资源容易导致死锁。java线程是协作式，而非抢占式。可以使用interrupt()、isinterrupted()、static方法isinterrupted()。调用了static方法isinterrupted()后会把中断标志位改为false。  
+interrupt()：不是强制中断线程while(true)，相当于检查中断标志位  
+方法内如果抛出InterruptedException，线程的中断标志位会被复位成false，如果确实是需要中断线程，要求我们自己在catch语句块里再次调用interrupt()。  
+ ![image](https://github.com/YangYaoCD/xiangxue_java/blob/master/src/picture/thread.png)  
+ 进一步认识：  
+ A.	run()和start()调用的区别，yield()和sleep()的区别。  
+ B.	线程优先级（了解，因为有些操作系统不能设置）：1-10，缺省值为5。  
+ C.	守护线程与主线程同生共死，finally不一定执行。  
+###1.1.3线程间的共享
+Synchronized内置锁（区别对象锁，类锁）。  
+Volatile关键字，最轻量的同步机制。（无法保证执行的原子性，用处：只有一个线程写，多个线程读，保证可见性）。  
+ThreadLocal线程变量。可以理解为是个map，类型 Map<Thread,Integer>  
+
  
 ##1.2线程的并发工具类
 
