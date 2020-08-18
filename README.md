@@ -66,7 +66,28 @@ ThreadLocal线程变量。可以理解为是个map，类型 Map<Thread,Integer>
     规模为N的问题，N<阈值，直接解决，N>阈值，将N分解为K个小规模子问题，子问题互相对立，与原问题形式相同，将子问题的解合并得到原问题的解   
 ####2.	标准范式
  ![image](https://github.com/YangYaoCD/xiangxue_java/blob/master/src/picture/folkjoin.png)
-
+###1.2.2常用的并发工具类
+####1.	CountDownLatch
+  * 作用：是一组线程等待其他线程完成工作以后再执行，加强版的join（thread提供的方法）  
+  * 运行理解：countDown()一次减一，latch<0，await()方法唤醒。
+####2.	CyclicBarrier
+  * 作用：让一组线程到达一个屏障，被堵塞，一直到组内最后一个线程到达屏障，屏障开放，所有被堵塞的线程回继续运行。
+  * CyclicBarrier(int parties, Runnable barrierAction)，屏蔽开放，barrierAction定义的任务才能执行
+    CountDownLatch和CyclicBarrier辨析  
+    * 1、countdownlatch放行由第三者控制，CyclicBarrier放行由一组线程本身控制
+    * 2、countdownlatch放行条件>=线程数，CyclicBarrier放行条件=线程数
+####3.Semaphore
+* 控制同时访问某个特定资源的线程数量，用在流量控制。  
+* acquire()没有可用permit就会堵塞，等待有permit。  
+####4.Exchange
+    线程间的数据交换，只允许两个线程间数据交换。
+####5.Callable、Future和FutureTask 
+* isDone，结束，正常还是异常结束，或者自己取消，返回true；
+* isCancelled 任务完成前被取消，返回true；
+* cancel（boolean）：
+    * 任务还没开始，返回false
+    * 任务已经启动，cancel（true），中断正在运行的任务，中断成功，返回true，cancel（false），不会去中断已经运行的任务
+    * 任务已经结束，返回false
 
 ##1.3原子操作CAS
 
