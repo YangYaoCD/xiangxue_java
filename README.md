@@ -90,12 +90,48 @@ ThreadLocal线程变量。可以理解为是个map，类型 Map<Thread,Integer>
     * 任务已经结束，返回false
 
 ##1.3原子操作CAS
+###1.3.1什么是原子操作？何如实现原子操作？
+    Syn基于阻塞的锁的机制。1、被阻塞的线程优先级很高，2、拿到锁的线程一直不释放怎么办？3、大量竞争，会消耗cpu，同时带来死锁或者其他问题。
+    这就是用原子操作的前提（使用锁不方便，笨重）。
+####1.CAS原理
+（Compare And Swap），指令级别保证这是一个原子操作  
+三个运算符：一个内存地址V，一个期望的值A，一个新值B  
+基本思路：如果V上的值和期望的值A相等，就给V赋值B，不相等就不做操作。  
+循环（死循环，自旋）里不断的进行CAS操作。  
+利用了现代处理器都支持CAS指令，循环这个指令，直到成功为止。  
+####2.CAS的问题
+* a)	ABA问题（加版本号解决）
+* b)	开销问题（操作长期不成功，cpu不断循环）
+* c)	只能保证一个共享变量的原子操作
+###.3.2原子操作类的使用
+####1.	JDK中相关类使用
+* 更新基本类型类：AtomicBoolean，AtomicInteger，AtomicLong，AtomicReference
+* 更新数组类：AtomicIntegerArray，AtomicLongArray，AtomicReferenceArray
+* 更新引用类型：AtomicReference，AtomicMarkableReference，AtomicStampedReference
+* 原子更新字段类：AtomicReferenceFieldUpdater，AtomicIntegerFieldUpdater，AtomicLongFieldUpdater
+####2.	ABA问题解决
+> AtomicMarkableReference：boolean有没有人动过  
+AtomicStampedReference：动过几次
 
 
 
 ##1.4显示锁和AQS
-
-
+####1.4.1显示锁
+#####1.	Lock接口和核心方法
+> lock()  
+unlock()  
+trylock()
+####2.	Lock接口和synchronized的比较
+> Synchronized：代码简洁  
+Lock：获取锁可以被中断，超时获取锁，尝试获取锁
+####3.	可重入锁ReentrantLock、所谓锁的公平和非公平
+    如果在时间上，先对锁进行获取的请求，一定先被满足，这个锁就是公平的，不满足，就是非公平的。
+    非公平的效率一般来讲更高
+####4.	ReadWriteLock接口和读写锁ReentrantReadWriteLock，什么情况用读写锁
+> ReadWriteLock和Syn关键字，都是排他锁；
+> 读写锁：同一时刻允许多个读线程同时访问，但是写线程访问的时候，所有的读和写都被阻塞，最适宜于读多写少的情况。
+####5.	Condition接口
+####6.	用Lock和Condition实现等待通知
 
 ##1.5并发容器
 
