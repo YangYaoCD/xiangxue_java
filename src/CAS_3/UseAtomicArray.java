@@ -14,14 +14,28 @@ public class UseAtomicArray {
     static AtomicIntegerArray ai=new AtomicIntegerArray(value);
     static AtomicInteger i=new AtomicInteger(0);
 
+    private static class plus implements Runnable {
+        @Override
+        public void run() {
+            boolean flag=true;
+            while (flag){
+                int ori=i.get();
+                if(i.compareAndSet(ori,++ori)){
+                    flag=false;
+                }
+            }
+            System.out.println(i.get());
+        }
+    }
+
     public static void main(String[] args) {
         ai.getAndSet(0,3);
         System.out.println(ai.get(0));
         System.out.println(value[0]);
-        for (int j = 0; j < 10; j++) {
-            System.out.println("当前的值="+i.get()+i.compareAndSet(i.get(),i.get()+1));
-            System.out.println("修改后的值"+i.get());
-        }
+        plus plus1 = new plus();
+        plus plus2 = new plus();
+        new Thread(plus1).run();
+        new Thread(plus2).run();
     }
 
 }

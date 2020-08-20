@@ -11,8 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date 2020/8/18 11:20
  * @Description 因为汉诺塔问题是个分支问题，我用异步想实现它。刚开始不成功，无法让谁先运行，汉诺塔问题适合串行而不是并行。
  *              第二次尝试使用join方法来实现线程串行，成功
- *              加入了AtomicInteger来记录步骤和步数，我认为记录步骤用AtomicInteger不太好，因为compareAndSet(ai.get(),ai.get()+1)返回一定为true，对于AtomicInteger就没意义。
- *                  步数compareAndSet(a,a+1)就很适合。
+ *              加入了AtomicInteger来记录步骤和步数，我认为记录步骤用AtomicInteger可以但任然觉得不是特别适合CAS操作，因为这个线程有点类似串行。
  */
 public class hanuota {
     static AtomicInteger ai=new AtomicInteger(0);
@@ -22,7 +21,6 @@ public class hanuota {
         private String B;
         private String C;
         private int num;
-        private final int a=ai.get();
 
 
         public HanuotaTask(String A,String B,String C, int num) {
@@ -36,14 +34,16 @@ public class hanuota {
         @Override
         protected void compute() {
             if (num>0){
-                boolean flag=ai.compareAndSet(a,a+1);
+                System.out.println(Thread.currentThread().getName());
                 HanuotaTask hanuotaTask = new HanuotaTask(A, C, B, num - 1);//小的到B(A->B)
                 invokeAll(hanuotaTask);
                 hanuotaTask.join();
-                if (flag){
-                    System.out.println("第"+num+"个盘子从  "+A+"--->"+C);
-                }else {
-                    System.out.println("不成功");
+                while (true){
+                    int a=ai.get();
+                    if (ai.compareAndSet(a,a+1)){
+                        System.out.println("步骤"+a+"第"+num+"个盘子从  "+A+"--->"+C);
+                        break;
+                    }
                 }
                 HanuotaTask hanuotaTask2 = new HanuotaTask(B, A, C, num - 1);//再从B到A(B->A)
                 invokeAll(hanuotaTask2);

@@ -31,7 +31,7 @@ public class DaemonThread {
         UseThread useThread = new UseThread();
         useThread.setDaemon(true);
         useThread.start();
-        Thread.sleep(5);
-        //useThread.interrupt();
+        Thread.sleep(0);
+        useThread.interrupt();
     }
 }

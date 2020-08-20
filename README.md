@@ -103,7 +103,7 @@ ThreadLocal线程变量。可以理解为是个map，类型 Map<Thread,Integer>
 * a)	ABA问题（加版本号解决）
 * b)	开销问题（操作长期不成功，cpu不断循环）
 * c)	只能保证一个共享变量的原子操作
-###.3.2原子操作类的使用
+###1.3.2原子操作类的使用
 ####1.	JDK中相关类使用
 * 更新基本类型类：AtomicBoolean，AtomicInteger，AtomicLong，AtomicReference
 * 更新数组类：AtomicIntegerArray，AtomicLongArray，AtomicReferenceArray
@@ -121,17 +121,103 @@ AtomicStampedReference：动过几次
 > lock()  
 unlock()  
 trylock()
-####2.	Lock接口和synchronized的比较
+#####2.	Lock接口和synchronized的比较
 > Synchronized：代码简洁  
 Lock：获取锁可以被中断，超时获取锁，尝试获取锁
-####3.	可重入锁ReentrantLock、所谓锁的公平和非公平
+#####3.	可重入锁ReentrantLock、所谓锁的公平和非公平
     如果在时间上，先对锁进行获取的请求，一定先被满足，这个锁就是公平的，不满足，就是非公平的。
     非公平的效率一般来讲更高
-####4.	ReadWriteLock接口和读写锁ReentrantReadWriteLock，什么情况用读写锁
+#####4.	ReadWriteLock接口和读写锁ReentrantReadWriteLock，什么情况用读写锁
 > ReadWriteLock和Syn关键字，都是排他锁；
 > 读写锁：同一时刻允许多个读线程同时访问，但是写线程访问的时候，所有的读和写都被阻塞，最适宜于读多写少的情况。
-####5.	Condition接口
-####6.	用Lock和Condition实现等待通知
+5.	Condition接口
+6.	用Lock和Condition实现等待通知
+1.4.2了解LockSupport工具
+1.	作用
+阻塞一个线程
+唤醒一个线程
+构建同步组件的基础工具
+2.	Park开头的方法
+3.	Unpark（Thread thread）方法
+1.4.3AbstractQueueSynchronizer深入分析
+1.	什么是AQS？学习它的必要性
+1)	AQS使用方式和其中的设计模式
+继承，模板方法设计模式
+2)	了解其中的方法
+模板方法（不需要覆盖直接用）：
+独占式获取锁：accquire、acquireInterruptibly、tryAcquireNanos
+共享式获取锁：acquireShared、acquireSharedInterruptibly、tryAcquireSharedNanos
+独占式释放锁：release
+共享式释放锁：releaseShared
+	需要子类覆盖的流程方法：
+		独占式获取：tryAcquire
+		独占式释放：tryRelease
+		共享式获取：tryAcquireShared
+		共享式释放：tryReleaseShared
+isHeldExclusively（这个同步器是否处于独占模式）
+	同步状态：获取当前的同步状态
+		getState：获取当前同步状态
+		setState：设置当前同步状态
+		compareAndSetState：使用CAS设置状态，保证设置状态原子性
+3)	AQS中的数据结构——节点和同步队列
+A.	Node里
+i.	CANCELLED：线程等待超时或者被中断了，需要从队列中移走
+ii.	SIGNAL：后续的节点等待状态，当前节点，通知后面节点运行
+iii.	CONDITION：当前节点处在等待队列
+iv.	PROPAGATE：共享，表示状态往后面节点传播
+v.	0表示初始状态
+4)	独占式同步状态获取和释放
+#####5.	Condition接口
+#####6.	用Lock和Condition实现等待通知
+###1.4.2了解LockSupport工具
+####1.	作用
+>阻塞一个线程  
+>唤醒一个线程  
+>构建同步组件的基础工具  
+####2.	Park开头的方法
+####3.	Unpark（Thread thread）方法
+###1.4.3AbstractQueueSynchronizer深入分析
+####1.	什么是AQS？学习它的必要性
+* 1)AQS使用方式和其中的设计模式
+继承，模板方法设计模式
+* 2)了解其中的方法
+    * 模板方法（不需要覆盖直接用）：  
+        * 独占式获取锁：accquire、acquireInterruptibly、tryAcquireNanos  
+        * 共享式获取锁：acquireShared、acquireSharedInterruptibly、tryAcquireSharedNanos  
+        * 独占式释放锁：release  
+        * 共享式释放锁：releaseShared  
+    * 需要子类覆盖的流程方法：  
+        * 独占式获取：tryAcquire
+        * 独占式释放：tryRelease
+        * 共享式获取：tryAcquireShared
+        * 共享式释放：tryReleaseShared
+        * isHeldExclusively（这个同步器是否处于独占模式）
+    * 同步状态：获取当前的同步状态
+        * getState：获取当前同步状态
+        * setState：设置当前同步状态
+        * compareAndSetState：使用CAS设置状态，保证设置状态原子性
+* 3)AQS中的数据结构——节点和同步队列  
+    * Node里  
+        * i.	CANCELLED：线程等待超时或者被中断了，需要从队列中移走
+        * ii.	SIGNAL：后续的节点等待状态，当前节点，通知后面节点运行
+        * iii.	CONDITION：当前节点处在等待队列
+        * iv.	PROPAGATE：共享，表示状态往后面节点传播
+        * v.	0表示初始状态
+* 4)独占式同步状态获取和释放
+ ![image](https://github.com/YangYaoCD/xiangxue_java/blob/master/src/picture/exclulock.png)
+* 5)其他同步状态获取和释放
+    * A.	共享式同步状态获取与释放
+    * B.	独占式超时同步状态获取
+    * C.	再次实战，实现一个奇葩点的三元共享同步工具类
+###1.4.4Condition分析
+* 1)一个Condition包含一个等待队列（单向链表）
+* 2)同步队列与等待队列  
+ ![image](https://github.com/YangYaoCD/xiangxue_java/blob/master/src/picture/queue.png)
+* 3)节点在队列之间的移动  
+  await方法  
+ ![image](https://github.com/YangYaoCD/xiangxue_java/blob/master/src/picture/await.png)  
+  signal方法  
+ ![image](https://github.com/YangYaoCD/xiangxue_java/blob/master/src/picture/signal.png)
 
 ##1.5并发容器
 
