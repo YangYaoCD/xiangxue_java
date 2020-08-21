@@ -28,6 +28,7 @@ public class IntToBinary {
     	
     	//取模的操作 a % (2^n) 等价于 a&(2^n-1)
     	System.out.println("the 345 % 16 is "+(345%16)+ " or "+(345&(16-1)));
-    	
+
+		System.out.println(15>>>2);
     } 
 }
