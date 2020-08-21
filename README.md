@@ -220,8 +220,45 @@ v.	0表示初始状态
  ![image](https://github.com/YangYaoCD/xiangxue_java/blob/master/src/picture/signal.png)
 
 ##1.5并发容器
-
-
+###1.5.1ConcurrentHashMap
+Hashmap 多线程 put操作会引起死循环，hashmap里的Entry链表产生环形的数据结构。  
+putIfAbsent()：没有这个值则放入map，有这个值则返回key本来对应的值。  
+####1.	预备知识
+* A.Hash
+散列，哈希：把任意长度的输入通过一种算法（散列），变换成为固定长度的输出，这个输出值就是散列值。属于压缩映射，容易产生哈希冲突。Hash算法有直接取余法等。  
+产生哈希冲突时解决办法：1、开放寻址；2、再散列；3、链地址法（相同hash值的元素用链表串起来）。  
+ConcurrentHashMap在发生hash冲突时采用了链地址法。  
+md4,md5,sha —— hash算法也属于hash算法，又称摘要算法。  
+* B.位运算
+用处：权限控制，物品的属性非常多
+###1.5.2jdk1.7以前中原理和实现
+####1.	ConcurrentHashMap中的数据结构
+ConcurrentHashMap是由Segment数组结构和HashEntry数组结构组成。Segment实际继承自可重入锁（ReentrantLock），在ConcurrentHashMap里扮演锁的角色；HashEntry则用于存储键值对数据。一个ConcurrentHashMap里包含一个Segment数组，每个Segment里包含一个HashEntry数组，我们称之为table，每个HashEntry是一个链表结构的元素。  
+ ![image](https://github.com/YangYaoCD/xiangxue_java/blob/master/src/picture/concurrenhashmap.jpg)  
+####2.	面试常问：
+    ConcurrentHashMap实现原理是怎么样的或者问ConcurrentHashMap如何在保证高并发下线程安全的同时实现了性能提升？  
+    答：ConcurrentHashMap允许多个修改操作并发进行，其关键在于使用了锁分离技术。它使用了多个锁来控制对hash表的不同部分进行的修改。内部使用段(Segment)来表示这些不同的部分，每个段其实就是一个小的hash table，只要多个修改操作发生在不同的段上，它们就可以并发进行。
+####3.	初始化做了什么事？
+初始化有三个参数
+* initialCapacity：初始容量大小 ，默认16。
+* loadFactor, 扩容因子，默认0.75，当一个Segment存储的元素数量大于initialCapacity* loadFactor时，该Segment会进行一次扩容。
+* concurrencyLevel 并发度，默认16。并发度可以理解为程序运行时能够同时更新ConccurentHashMap且不产生锁竞争的最大线程数，实际上就是ConcurrentHashMap中的分段锁个数，即Segment[]的数组长度。如果并发度设置的过小，会带来严重的锁竞争问题；如果并发度设置的过大，原本位于同一个Segment内的访问会扩散到不同的Segment中，CPU cache命中率会下降，从而引起程序性能下降。
+####4.	在get和put操作中，是如何快速定位元素放在哪个位置的？
+对于某个元素而言，一定是放在某个segment元素的某个table元素中的，所以在定位上，
+* 定位segment：取得key的hashcode值进行一次再散列（通过Wang/Jenkins算法），拿到再散列值后，以再散列值的高位进行取模得到当前元素在哪个segment上。
+* 定位table：同样是取得key的再散列值以后，用再散列值的全部和table的长度进行取模，得到当前元素在table的哪个元素上。
+####5.	get（）方法
+定位segment和定位table后，依次扫描这个table元素下的的链表，要么找到元素，要么返回null。  
+    问：在高并发下的情况下如何保证取得的元素是最新的？  
+    答：用于存储键值对数据的HashEntry，在设计上它的成员变量value等都是volatile类型的，这样就保证别的线程对value值的修改，get方法可以马上看到。
+####6.	put()方法
+	首先定位segment，当这个segment在map初始化后，还为null，由ensureSegment方法负责填充这个segment。
+####7.	扩容操作
+Segment 不扩容，扩容下面的table数组，每次都是将数组翻倍
+####8.	size方法
+size的时候进行两次不加锁的统计，两次一致直接返回结果，不一致，重新加锁再次统计
+####9.	弱一致性
+get方法和containsKey方法都是通过对链表遍历判断是否存在key相同的节点以及获得该节点的value。但由于遍历过程中其他线程可能对链表结构做了调整，因此get和containsKey返回的可能是过时的数据，这一点是ConcurrentHashMap在弱一致性上的体现。  
 
 ##1.6线程池和Exector框架
 ##1.7线程安全
