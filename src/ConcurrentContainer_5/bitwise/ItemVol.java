@@ -15,7 +15,7 @@ public class ItemVol<T> implements Delayed {
 
     public ItemVol(long activetime, T date) {
         /**
-          *@param [activetime//过期时长, date]
+          *@param [activetime：过期时长, date]
           *return
          */
         this.activetime = TimeUnit.NANOSECONDS.convert(activetime,TimeUnit.MILLISECONDS)
@@ -34,6 +34,7 @@ public class ItemVol<T> implements Delayed {
     //按照剩余时间排序
     @Override
     public int compareTo(Delayed o) {
+        //this-o
         long d=getDelay(TimeUnit.NANOSECONDS)-o.getDelay(TimeUnit.NANOSECONDS);
         return d==0?0:((d>0)?1:-1);
     }
