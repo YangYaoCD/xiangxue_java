@@ -47,8 +47,10 @@ public class UseThreadLocal {
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws InterruptedException {
         UseThreadLocal test = new UseThreadLocal();
         test.StartThreadArray();
+        Thread.sleep(1000);
+        System.out.println(threadLocal.get());
     }
 }

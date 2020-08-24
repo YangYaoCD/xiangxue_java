@@ -321,63 +321,63 @@ TreeNode 用在红黑树，表示树的节点, TreeBin是实际放在table数组
     比如，ArrayBlockingQueue就是基于Lock和Condition实现的。
 
 ##1.6线程池
-1.6.1线程池
-1.	什么是线程池？为什么要用线程池？
-A.	降低资源的消耗。降低线程创建和销毁的资源消耗；
-B.	提高响应速度：线程的创建时间为T1，执行时间T2,销毁时间T3，免去T1和T3的时间
-C.	提高线程的可管理性。
-2.	实现一个我们自己的线程池
-A.	线程必须在池子已经创建好了，并且可以保持住，要有容器保存多个线程；
-B.	线程还要能够接受外部的任务，运行这个任务。容器保持这个来不及运行的任务。
-3.	JDK中的线程池和工作机制
-A.	线程池的创建
+###1.6.1线程池
+####1.	什么是线程池？为什么要用线程池？
+* A.	降低资源的消耗。降低线程创建和销毁的资源消耗；
+* B.	提高响应速度：线程的创建时间为T1，执行时间T2,销毁时间T3，免去T1和T3的时间
+* C.	提高线程的可管理性。
+####2.	实现一个我们自己的线程池
+* A.	线程必须在池子已经创建好了，并且可以保持住，要有容器保存多个线程；
+* B.	线程还要能够接受外部的任务，运行这个任务。容器保持这个来不及运行的任务。
+####3.	JDK中的线程池和工作机制
+* A.	线程池的创建  
 ThreadPoolExecutor，jdk所有线程池实现的父类
-B.	各个参数含义
-int corePoolSize：线程池中核心线程数，< corePoolSize，就会创建新线程，= corePoolSize，这个任务就会保存到BlockingQueue，如果调用prestartAllCoreThreads（）方法就会一次性的启动corePoolSize个数的线程。
-int maximumPoolSize, 允许的最大线程数，BlockingQueue也满了，< maximumPoolSize时候就会再次创建新的线程
-long keepAliveTime, 线程空闲下来后，存活的时间，这个参数只在> corePoolSize才有用
-TimeUnit unit, 存活时间的单位值
-BlockingQueue<Runnable> workQueue, 保存任务的阻塞队列
-ThreadFactory threadFactory, 创建线程的工厂，给新建的线程赋予名字
-RejectedExecutionHandler handler ：饱和策略
-AbortPolicy：直接抛出异常，默认；
-CallerRunsPolicy：用调用者所在的线程来执行任务
-DiscardOldestPolicy：丢弃阻塞队列里最老的任务，队列里最靠前的任务
-DiscardPolicy：当前任务直接丢弃
-实现自己的饱和策略，实现RejectedExecutionHandler接口即可
-4.	提交任务
-execute(Runnable command)  不需要返回
-Future<T> submit(Callable<T> task) 需要返回
-5.	关闭线程池
-shutdown(),shutdownNow();
-shutdownNow():设置线程池的状态，还会尝试停止正在运行或者暂停任务的线程
-shutdown()设置线程池的状态，只会中断所有没有执行任务的线程
-6.	工作机制
-1.6.2合理配置线程池
-根据任务的性质来：计算密集型（CPU），IO密集型，混合型
-计算密集型：加密，大数分解，正则…….， 线程数适当小一点，最大推荐：机器的Cpu核心数+1，为什么+1，防止页缺失，(机器的Cpu核心=Runtime.getRuntime().availableProcessors();)
-IO密集型：读取文件，数据库连接，网络通讯, 线程数适当大一点，机器的Cpu核心数*2,
-混合型：尽量拆分，IO密集型>>计算密集型，拆分意义不大，IO密集型~计算密集型
-队列的选择上，应该使用有界，无界队列可能会导致内存溢出，OOM
-1.6.3预定义的线程池
-A.	FixedThreadPool
+* B.	各个参数含义  
+    * int corePoolSize：线程池中核心线程数，< corePoolSize，就会创建新线程，= corePoolSize，这个任务就会保存到BlockingQueue，如果调用prestartAllCoreThreads（）方法就会一次性的启动corePoolSize个数的线程。
+    * int maximumPoolSize, 允许的最大线程数，BlockingQueue也满了，< maximumPoolSize时候就会再次创建新的线程
+    * long keepAliveTime, 线程空闲下来后，存活的时间，这个参数只在> corePoolSize才有用
+    * TimeUnit unit, 存活时间的单位值
+    * BlockingQueue<Runnable> workQueue, 保存任务的阻塞队列
+    * ThreadFactory threadFactory, 创建线程的工厂，给新建的线程赋予名字
+    * RejectedExecutionHandler handler ：饱和策略
+    * AbortPolicy：直接抛出异常，默认；
+    * CallerRunsPolicy：用调用者所在的线程来执行任务
+    * DiscardOldestPolicy：丢弃阻塞队列里最老的任务，队列里最靠前的任务
+    * DiscardPolicy：当前任务直接丢弃  
+    实现自己的饱和策略，实现RejectedExecutionHandler接口即可
+####4.	提交任务
+* execute(Runnable command)  不需要返回
+* Future<T> submit(Callable<T> task) 需要返回
+####5.	关闭线程池
+    shutdown(),shutdownNow();
+    shutdownNow():设置线程池的状态，还会尝试停止正在运行或者暂停任务的线程
+    shutdown()设置线程池的状态，只会中断所有没有执行任务的线程
+####6.	工作机制
+###1.6.2合理配置线程池
+    根据任务的性质来：计算密集型（CPU），IO密集型，混合型
+    计算密集型：加密，大数分解，正则…….， 线程数适当小一点，最大推荐：机器的Cpu核心数+1，为什么+1，防止页缺失，(机器的Cpu核心=Runtime.getRuntime().availableProcessors();)
+    IO密集型：读取文件，数据库连接，网络通讯, 线程数适当大一点，机器的Cpu核心数*2,
+    混合型：尽量拆分，IO密集型>>计算密集型，拆分意义不大，IO密集型~计算密集型
+    队列的选择上，应该使用有界，无界队列可能会导致内存溢出，OOM
+###1.6.3预定义的线程池和Executor框架
+* A.	FixedThreadPool  
 创建固定线程数量的，适用于负载较重的服务器，使用了无界队列
-B.	SingleThreadExecutor
+* B.	SingleThreadExecutor  
 创建单个线程，需要顺序保证执行任务，不会有多个线程活动，使用了无界队列
-C.	CachedThreadPool
+* C.	CachedThreadPool  
 会根据需要来创建新线程的，执行很多短期异步任务的程序，使用了SynchronousQueue
-D.	WorkStealingPool（JDK7以后） 
+* D.	WorkStealingPool（JDK7以后）   
 基于ForkJoinPool实现
-E.	ScheduledThreadPoolExecutor 
+* E.	ScheduledThreadPoolExecutor   
 需要定期执行周期任务，Timer不建议使用了。
-newSingleThreadScheduledExecutor：只包含一个线程，只需要单个线程执行周期任务，保证顺序的执行各个任务
-newScheduledThreadPool 可以包含多个线程的，线程执行周期任务，适度控制后台线程数量的时候
-方法说明：
-schedule：只执行一次，任务还可以延时执行
-scheduleAtFixedRate：提交固定时间间隔的任务
-scheduleWithFixedDelay：提交固定延时间隔执行的任务
-两者的区别：
-scheduleAtFixedRate任务超时：
+    * newSingleThreadScheduledExecutor：只包含一个线程，只需要单个线程执行周期任务，保证顺序的执行各个任务
+    * newScheduledThreadPool 可以包含多个线程的，线程执行周期任务，适度控制后台线程数量的时候
+    * 方法说明：
+        * schedule：只执行一次，任务还可以延时执行
+        * scheduleAtFixedRate：提交固定时间间隔的任务
+        * scheduleWithFixedDelay：提交固定延时间隔执行的任务
+        * 两者的区别：
+            * scheduleAtFixedRate任务超时：  
 规定60s执行一次，有任务执行了80S，下个任务马上开始执行
 第一个任务 时长 80s，第二个任务20s，第三个任务 50s
 第一个任务第0秒开始，第80S结束；
@@ -385,8 +385,50 @@ scheduleAtFixedRate任务超时：
 第三个任务第120s秒开始，170秒结束
 第四个任务从180s开始
 参加代码：ScheduleWorkerTime类：建议在提交给ScheduledThreadPoolExecutor的任务要住catch异常。
+###1.6.4Executor框架
+###1.6.5了解CompletionService
+    先运行完的任务先拿到返回值（与用容器存返回值的区别）。
 
-##1.7Exector框架
-##1.8线程安全
-##1.9JMM和底层原理
+##1.7线程安全
+###1.7.1类的线程安全定义
+    如果多线程下使用这个类，不过多线程如何使用和调度这个类，这个类总是表示出正确的行为，这个类就是线程安全的。
+类的线程安全表现为：  
+* 操作的原子性
+* 内存的可见性  
+    不做正确的同步，在多个线程之间共享状态的时候，就会出现线程不安全。
+###1.7.2怎么才能做到类的线程安全？
+* 1.栈封闭  
+所有的变量都是在方法内部声明的，这些变量都处于栈封闭状态。
+* 2.无状态  
+没有任何成员变量的类，就叫无状态的类
+* 3.让类不可变  
+让状态不可变，两种方式：  
+    * A.	加final关键字，对于一个类，所有的成员变量应该是私有的，同样的只要有可能，所有的成员变量应该加上final关键字，但是加上final，要注意如果成员变量又是一个对象时，这个对象所对应的类也要是不可变，才能保证整个类是不可变的。
+    * B.	根本就不提供任何可供修改成员变量的地方，同时成员变量也不作为方法的返回值  
+AKKA框架
+* 4.volatile  
+保证类的可见性，最适合一个线程写，多个线程读的情景，
+* 5.加锁和CAS
+* 6.安全的发布  
+类中持有的成员变量，特别是对象的引用，如果这个成员对象不是线程安全的，通过get等方法发布出去，会造成这个成员对象本身持有的数据在多线程下不正确的修改，从而造成整个类线程不安全的问题。
+* 7.TheadLocal  
+###1.7.3死锁
+    资源一定是多于1个，同时小于等于竞争的线程数，资源只有一个，只会产生激烈的竞争。
+    死锁的根本成因：获取锁的顺序不一致导致。
+    怀疑发生死锁：
+    通过jps 查询应用的 id，
+    再通过jstack id 查看应用的锁的持有情况
+    解决办法：保证加锁的顺序性
+* 1.简单的
+* 2.动态的
+    动态顺序死锁，在实现时按照某种顺序加锁了，但是因为外部调用的问题，导致无法保证加锁顺序而产生的。  
+    解决：  
+    * 1、通过内在排序，保证加锁的顺序性
+    * 2、通过尝试拿锁，也可以。
+###1.7.4其他安全问题
+* 1.活锁  
+尝试拿锁的机制中，发生多个线程之间互相谦让，不断发生拿锁，释放锁的过程。  
+解决办法：每个线程休眠随机数，错开拿锁的时间。
+
+##1.8JMM和底层原理
 

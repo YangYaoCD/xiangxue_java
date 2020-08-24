@@ -1,7 +1,6 @@
-package poolAndExector_5.mypool;
+package poolAndExector_6.mypool;
 
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 
 /**
