@@ -33,7 +33,7 @@ public class NormalDeadLock {
         	synchronized (valueSecond) {
         		System.out.println(threadName+" get second");
 			}
-		}        
+		}
     }
 
     //执行先拿第二个锁，再拿第一个锁
