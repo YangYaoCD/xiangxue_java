@@ -1,4 +1,4 @@
-package shizhan_8.vo;
+package shizhan_8a.vo;
 
 /**
  * @author YangYao

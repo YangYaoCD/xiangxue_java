@@ -1,4 +1,4 @@
-package shizhan_8.vo;
+package shizhan_8a.vo;
 
 /**
  * @author YangYao
@@ -32,5 +32,14 @@ public class TaskResult<R> {
         this.resultType = resultType;
         this.returnValue = returnValue;
         this.reason = "Success";
+    }
+
+    @Override
+    public String toString() {
+        return "TaskResult{" +
+                "resultType=" + resultType +
+                ", returnValue=" + returnValue +
+                ", reason='" + reason + '\'' +
+                '}';
     }
 }

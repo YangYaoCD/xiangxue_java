@@ -11,22 +11,22 @@ import java.util.concurrent.TimeUnit;
 public class ItemVo<T> implements Delayed{
 	
 	private long activeTime;//到期时间，单位毫秒
-	private T date;
+	private T data;
 	
 	//activeTime是个过期时长
-	public ItemVo(long activeTime, T date) {
+	public ItemVo(long activeTime, T data) {
 		super();
 		this.activeTime = TimeUnit.NANOSECONDS.convert(activeTime, 
 				TimeUnit.MILLISECONDS)+System.nanoTime();//将传入的时长转换为超时的时刻
-		this.date = date;
+		this.data = data;
 	}
 	
 	public long getActiveTime() {
 		return activeTime;
 	}
 
-	public T getDate() {
-		return date;
+	public T getData() {
+		return data;
 	}
 
 	//按照剩余时间排序
