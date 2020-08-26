@@ -1,10 +1,14 @@
 package shizhan_8b.service;
 
-import com.xiangxue.ch8b.assist.SL_Busi;
-import com.xiangxue.ch8b.service.question.SingleQstService;
-import com.xiangxue.ch8b.vo.SrcDocVo;
+
+import shizhan_8b.assist.SL_Busi;
+import shizhan_8b.service.question.ParallerQuestionService;
+import shizhan_8b.service.question.SingleQstService;
+import shizhan_8b.vo.SrcDocVo;
+import shizhan_8b.vo.TaskResultVo;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  *@author Mark老师   享学课堂 https://enjoy.ke.qq.com 
@@ -38,6 +42,24 @@ public class ProduceDocService {
         }
         return "complete_"+System.currentTimeMillis()+"_"
         	+ pendingDocVo.getDocName()+".pdf";
+    }
+
+    //异步化处理题目的方法
+    public static String makeDocAsyn(SrcDocVo pendingDocVo) throws ExecutionException, InterruptedException {
+        System.out.println("开始处理文档："+ pendingDocVo.getDocName());
+        Map<Integer, TaskResultVo> gstResultMap=new HashMap<>();
+        //循环处理文档中的每个题目，准备并行化处理
+        for(Integer questionId: pendingDocVo.getQuestionList()){
+            gstResultMap.put(questionId, ParallerQuestionService.makeQuestion(questionId));
+        }
+        StringBuffer sb = new StringBuffer();
+        for (Integer questionId : pendingDocVo.getQuestionList()) {
+            TaskResultVo result = gstResultMap.get(questionId);
+            sb.append (result.getQuestionDetail()!=null?
+                    result.getQuestionDetail():result.getQuestionFuture().get().getQuestionDetail());
+        }
+        return "complete_"+System.currentTimeMillis()+"_"
+                + pendingDocVo.getDocName()+".pdf";
     }
 
 

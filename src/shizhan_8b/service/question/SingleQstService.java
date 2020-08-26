@@ -1,6 +1,7 @@
 package shizhan_8b.service.question;
 
-import com.xiangxue.ch8b.assist.SL_QuestionBank;
+
+import shizhan_8b.assist.SL_QuestionBank;
 
 /**
  *@author Mark老师   享学课堂 https://enjoy.ke.qq.com 

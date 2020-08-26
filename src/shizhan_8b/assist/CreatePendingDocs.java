@@ -1,7 +1,7 @@
 package shizhan_8b.assist;
 
-import com.xiangxue.ch8b.assist.Consts;
-import com.xiangxue.ch8b.vo.SrcDocVo;
+
+import shizhan_8b.vo.SrcDocVo;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class CreatePendingDocs {
 
     /**
      * 生成一批待处理文档
-     * @param docCount 生成的文档数量
+     * @param count 生成的文档数量
      * @return 待处理文档列表
      */
     public static List<SrcDocVo> makePendingDoc(int count){

@@ -28,7 +28,7 @@ public class SL_QuestionBank {
         for(int i=0;i<Consts.SIZE_OF_QUESTION_BANK;i++){
             String questionContent = makeQuestionDetail(Consts.QUESTION_LENGTH);
             questionBankMap.put(i,new QuestionInDBVo(i,
-            		questionContent));
+            		questionContent,EncryptUtils.EncryptBySHA1(questionContent)));
         }
         updateQuestionTimer();//启动定期更新题库数据任务
     }
@@ -51,6 +51,12 @@ public class SL_QuestionBank {
         return questionBankMap.get(i);
     }
 
+    //获得题目的再要，我们假设一次数据库的读耗时在一般在20ms左右，所以休眠20ms
+    public static String getSha(int i) {
+        SL_Busi.buisness(10);
+        return questionBankMap.get(i).getSha();
+    }
+
     //更新题库的定时任务
     private static class UpdateBank implements Runnable{
 
@@ -61,7 +67,7 @@ public class SL_QuestionBank {
             int questionId = random.nextInt(Consts.SIZE_OF_QUESTION_BANK);
             String questionContent = makeQuestionDetail(Consts.QUESTION_LENGTH);
             questionBankMap.put(questionId,new QuestionInDBVo(questionId,
-                    questionContent));
+                    questionContent,EncryptUtils.EncryptBySHA1(questionContent)));
             System.out.println("题目【"+questionId+"】被更新！！");
         }
     }

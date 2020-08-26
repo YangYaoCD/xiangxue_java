@@ -1,5 +1,7 @@
 package shizhan_8b.assist;
 
+
+
 import org.apache.commons.lang.StringUtils;
 
 import java.security.DigestException;
@@ -166,7 +168,6 @@ public class EncryptUtils {
         if( str==null || str.length()==0 || StringUtils.isBlank(key)){
             return encrypt(str);
         }
-
         return encrypt(union(str, key));
 
     }
